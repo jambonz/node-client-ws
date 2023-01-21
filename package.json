@@ -1,6 +1,6 @@
 {
-  "name": "@jambonz/node-client",
-  "version": "0.1.0",
+  "name": "@jambonz/node-client-ws",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
