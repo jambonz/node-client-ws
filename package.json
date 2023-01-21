@@ -1,0 +1,20 @@
+{
+  "name": "@jambonz/node-client",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "jslint": "eslint lib"
+  },
+  "author": "Dave Horton",
+  "license": "MIT",
+  "dependencies": {
+    "pino": "^8.8.0",
+    "ws": "^8.12.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.32.0",
+    "eslint-plugin-promise": "^6.1.1"
+  }
+}
