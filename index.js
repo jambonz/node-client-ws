@@ -1,3 +1,4 @@
+const assert = require('assert');
 const {WebSocketServer} = require('ws');
 const Client = require('./lib/client');
 const Router = require('./lib/ws-router');
@@ -6,7 +7,12 @@ const handleProtocols = (protocols) => {
   return 'ws.jambonz.org';
 };
 
-const createEndpoint = ({server, port}) => {
+const createEndpoint = ({server, port, logger}) => {
+  logger = logger || {info: () => {}, error: () => {}, debug: () => {}};
+  assert.ok(typeof logger.info === 'function' &&
+    typeof logger.error === 'function' &&
+    typeof logger.debug === 'function',
+  'logger must be an object with info, error, and debug methods');
   const router = new Router();
   const wss = new WebSocketServer({ noServer: true, handleProtocols });
   server.on('upgrade', (req, socket, head) => {
@@ -27,7 +33,7 @@ const createEndpoint = ({server, port}) => {
   if (port) server.listen(port);
 
   function makeService({path}) {
-    const client = new Client();
+    const client = new Client(logger);
     router.use(path, client);
     return client;
   }
