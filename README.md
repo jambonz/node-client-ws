@@ -14,28 +14,25 @@ npx create-jambonz-ws-app
 # Usage
 
 ## Overview
-jambonz can interact with application using either HTTP webhooks or a websocket connection.  This library provides support for the latter method of operation (see [@jambonz/node-client](https://www.npmjs.com/package/@jambonz/node-client) for the companion partner Node.js library to use for building applications using webhooks).
+jambonz can interact with applications using either HTTP webhooks or a websocket connection.  This library provides support for the latter method of operation (see [@jambonz/node-client](https://www.npmjs.com/package/@jambonz/node-client) for the companion  Node.js library to use for building applications using HTTP webhooks).
 
 To use this library, an application must first create an http(s) server.  This library exposes a function, `createEndpoint` that is then invoked to attach a websocket server to that http server.  
 
-Doing so exposes a `makeService` function that can then be called one or more times to create different services corresponding to different request paths (e.g. '/hello-world' would be one service that routes to one application, '/echo' would be a difference service routing to another application).
+Doing so exposes a `makeService` function that can then be called one or more times to create different services corresponding to different request paths (e.g. '/hello-world' would be one service that routes to one application, '/echo' would be a different service that routes to different logic).
 
-Calling `makeService` with a path then returns a service client associated with that path.  The client is an Emitter which emits a `session:new` event when an incoming call has been received for the specified path.
+Calling `makeService` with a path returns a service client associated with that path.  The client emits a `session:new` event when an incoming call has been received for the specified path, providing the application with a `Session` object which is then used to act on that call.
 
-This is simpler than it sounds, and some sample code should make it clear.
+Sounds a bit involved but it is pretty simple as this sample code should make clear.
 
 ```js
-/* create your http server in your application */
+/* create an http/s server in your application however you like */
 const {createServer} = require('http');
 const server = createServer();
+server.listen(3000);
 
 /* require the library and call the returned function with your server */
 const {createEndpoint} = require('@jambonz/node-client-ws');
 const makeService = createEndpoint({server});
-
-server.listen(3000, () => {
-  console.log(`jambonz websocket server listening at http://localhost:3000`);
-});
 
 /* create a jambonz application listeng for requests with URL path '/hello-world' */
 const svc = makeService({path: '/hello-world'});
@@ -72,14 +69,11 @@ const onError = (session, err) => {
 
 ### A word on actionHooks
 
-Many jambonz verbs provide asynchronous notification of events; the `gather` verb, for instance sends a notification when a speech transcript is received.  When building the app using webhooks these events are sent as individual HTTP requests, but how is this handled in the case of a websocket application?
+Many jambonz verbs provide asynchronous notification of events; e.g. the `gather` verb sends a notification when a speech transcript is received.  When building the app using webhooks these events are sent as individual HTTP requests, but how is this handled in the case of a websocket application?
 
-Very similarly, is the answer.  You still define actionHooks and the like as a path part of a URL (e.g. '/transcript') but now the session object will emit an event for that webhook.  
-
-See the  example below:
+Very similarly, is the answer.  You still define actionHooks and eventHooks in the same way, but now instead of a new http reuest you get a corresponding event emitted by the `session` object.  
 
 ```js
-session.on('/transcript', (evt) => {/* handle actionHook here.. */});
 session
   .pause({length: 1.5})
   .gather({
@@ -89,12 +83,14 @@ session
     timeout: 15
   })
   .send();
+
+session.on('/transcript', (evt) => {/* handle actionHook here.. */});
 ```
 
 #### replying to actionHooks
 When receiving actionHooks or eventHooks from jambonz it is possible to respond with a new set of verbs for jambonz to begin executing.  For instance, based on the transcript returned from a `gather` verb, your app may decide say something back to the user.
 
-When working with webhooks this is accomplished by including a json payload in the 200 OK response of the HTTP webhook.  In this library, we use `session.reply()` to respond to a webhook in this way.  
+When working with webhooks this is accomplished by including a json payload in the 200 OK response of the HTTP webhook.  In this library, we use `session.reply()` instead.  
 
 If you want to response to an actionHook by sending new jambonz verbs to execute, simply do this in your event handler for the actionHook:
 ```js
