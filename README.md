@@ -174,7 +174,7 @@ Emitted when the underlying websocket connection has an error.
 
 As described above, each webhook that you configure in verbs that you send to jambonz will be emitted as events
 
-- `error` {String} the error message
+- `evt` {Object} event data
 
 #### session.\[verb](data)
 
