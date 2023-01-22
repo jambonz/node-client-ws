@@ -71,7 +71,7 @@ const onError = (session, err) => {
 
 Many jambonz verbs provide asynchronous notification of events; e.g. the `gather` verb sends a notification when a speech transcript is received.  When building the app using webhooks these events are sent as individual HTTP requests, but how is this handled in the case of a websocket application?
 
-Very similarly, is the answer.  You still define actionHooks and eventHooks in the same way, but now instead of a new http reuest you get a corresponding event emitted by the `session` object.  
+Very similarly, is the answer.  You still define actionHooks and eventHooks in the same way, but now instead of a new http request you get a corresponding event emitted by the `session` object.  
 
 ```js
 session
@@ -84,7 +84,7 @@ session
   })
   .send();
 
-session.on('/transcript', (evt) => {/* handle actionHook here.. */});
+session.on('/transcript', (evt) => {/* respond to transcript here... */});
 ```
 
 #### replying to actionHooks
