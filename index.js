@@ -20,7 +20,7 @@ const createEndpoint = ({server, port, logger}) => {
     const parsed = parseurl(req);
     const client = router.route(req);
     if (!client) {
-      logger.info('no client found');
+      logger.info(`No client found for path: ${parsed.path}`);
       socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
       socket.destroy();
       return;
