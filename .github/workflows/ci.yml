@@ -14,3 +14,4 @@ jobs:
           node-version: lts/*
       - run: npm install
       - run: npm run jslint
+      - run: npm run test
