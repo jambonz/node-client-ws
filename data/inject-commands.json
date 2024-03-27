@@ -1,4 +1,14 @@
 {
+  "redirect": {
+    "properties": {
+      "call_hook": "string",
+      "child_call_hook": "string",
+      "child_call": "object",
+      "parent_call": "object"
+    },
+    "required": [
+    ]
+  },
   "call:status" : {
     "type": "string",
     "enum": ["completed", "no-answer"]
