@@ -1,0 +1,102 @@
+{
+  "redirect": {
+    "properties": {
+      "call_hook": "string",
+      "child_call_hook": "string",
+      "child_call": "object",
+      "parent_call": "object"
+    },
+    "required": [
+    ]
+  },
+  "call:status" : {
+    "type": "string",
+    "enum": ["completed", "no-answer"]
+  },
+  "mute:status": {
+    "type": "string",
+    "enum": ["mute", "unmute"]
+  },
+  "conf:mute-status": {
+    "type": "string",
+    "enum": ["mute", "unmute"]
+  },
+  "conf:hold-status": {
+    "type": "string",
+    "enum": ["hold", "unhold"]
+  },
+  "listen:status": {
+    "type": "string",
+    "enum": ["pause", "resume"]
+  },
+  "record": {
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["startCallRecording", "stopCallRecording", "pauseCallRecording", "resumeCallRecording"]
+      },
+      "siprecServerURL": "string",
+      "recordingID": "string",
+      "headers": "object"
+    },
+    "required": [
+      "action"
+    ]
+  },
+  "whisper": "object|string",
+  "sip:request": {
+    "properties": {
+      "method": "string",
+      "content_type": "string",
+      "headers": "object",
+      "content": "string"  
+    },
+    "required": [
+      "method"
+    ]
+  },
+  "dtmf": {
+    "properties": {
+      "digit": "string",
+      "duration": "number"
+    },
+    "required": [
+      "digit"
+    ]
+  },
+  "tag": "object",
+  "transcribe:status": {
+    "type": "string",
+    "enum": ["pause", "resume"]
+  },
+  "conf:participant-action": {
+    "properties": {
+      "action": {
+        "type": "action",
+        "enum": ["tag", "untag", "coach", "uncoach", "hold", "unhold", "mute", "unmute"]
+      },
+      "tag": "string"
+    },
+    "required": [
+      "action"
+    ]
+  },
+  "dub": {
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["addTrack", "removeTrack", "silenceTrack", "playOnTrack", "sayOnTrack"]
+      },
+      "track": "string",
+      "play": "string",
+      "say": "string|object",
+      "loop": "boolean",
+      "gain": "number|string"
+    },
+    "required": [
+      "action",
+      "track"
+    ]
+  },
+  "boostAudioSignal": "number|string"
+}
