@@ -53,8 +53,17 @@ test('validate inject commands syntax', (t) => {
   t.doesNotThrow(() => validateInjectCommand('whisper', 'http://foo.com'), 'whisper with url');
   t.doesNotThrow(() => validateInjectCommand('whisper', {
     verb: 'say',
-    text: 'hello'
+    text: 'hello',
   }), 'whisper with embedded command');
+
+  t.doesNotThrow(() => validateInjectCommand('dub', {
+    action: "sayOnTrack",
+    track: "a",
+    say: {
+      text: "hi, this is a dub track injected by the call leg A",
+    },
+    loop: true,
+  }, 'call-sid'), 'dub with embedded command');
 
   /* sip:request */
   t.doesNotThrow(() => validateInjectCommand('sip:request', {method: 'INFO'}), 'sip:request with method');
