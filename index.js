@@ -19,12 +19,25 @@ const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
   const router = new Router();
   const wss = new WebSocketServer({ noServer: true, handleProtocols });
 
-  const applyMiddlewares = (req, res, middlewares, callback) => {
-    const next = (index) => {
-      if (index >= middlewares.length) return callback();
-      middlewares[index](req, res, () => next(index + 1));
-    };
-    next(0);
+  const applyMiddlewares = async(req, res, middlewares) => {
+    for (let i = 0; i < middlewares.length; i++) {
+      await new Promise((resolve, reject) => {
+        const next = (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        };
+        try {
+          const result = middlewares[i](req, res, next);
+          if (result && typeof result.then === 'function') {
+            result.then(resolve).catch(reject);
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
   };
 
   /* Middleware to check if a service has been installed for this path */
@@ -41,13 +54,13 @@ const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
     next();
   };
 
-  server.on('upgrade', (req, socket, head) => {
+  server.on('upgrade', async(req, socket, head) => {
     const res = new http.ServerResponse(req);
     res.assignSocket(socket);
 
     req.locals = req.locals || {};
     req.locals.logger = logger;
-    applyMiddlewares(req, res, [...middlewares, validateRoute], () => {
+    await applyMiddlewares(req, res, [...middlewares, validateRoute], () => {
       const parsed = parseurl(req);
       const client = req.client;
       wss.handleUpgrade(req, socket, head, (ws) => {
