@@ -64,6 +64,7 @@ const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
     const parsed = parseurl(req);
     const client = req.client;
     wss.handleUpgrade(req, socket, head, (ws) => {
+      ws.req = req; // attach the request to the websocket in case middleware attached data
       client.handle(ws, parsed.pathname);
     });
   });
