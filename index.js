@@ -60,12 +60,11 @@ const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
 
     req.locals = req.locals || {};
     req.locals.logger = logger;
-    await applyMiddlewares(req, res, [...middlewares, validateRoute], () => {
-      const parsed = parseurl(req);
-      const client = req.client;
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        client.handle(ws, parsed.pathname);
-      });
+    await applyMiddlewares(req, res, [...middlewares, validateRoute]);
+    const parsed = parseurl(req);
+    const client = req.client;
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      client.handle(ws, parsed.pathname);
     });
   });
 
