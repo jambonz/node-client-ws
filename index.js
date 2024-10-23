@@ -7,7 +7,13 @@ const parseurl = require('parseurl');
 
 const handleProtocols = (protocols) => (protocols.has('ws.jambonz.org') ? 'ws.jambonz.org' : false);
 
-const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
+const createEndpoint = ({
+  server,
+  port,
+  logger,
+  middlewares = [],
+  externalWss = []
+}) => {
   logger = logger || { info: () => {}, error: () => {}, debug: () => {} };
   assert.ok(
     typeof logger.info === 'function' &&
@@ -15,6 +21,22 @@ const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
     typeof logger.debug === 'function',
     'logger must be an object with info, error, and debug methods'
   );
+
+  /* support for paths that are handled by external code; i.e. mutliple servers sharing single http server */
+  const mapOfExternalWss = new Map();
+  if (externalWss.length > 0) {
+    assert.ok(
+      Array.isArray(externalWss) &&
+      externalWss.every((s) => {
+        return typeof s.path === 'string' &&
+        s.wss && typeof s.wss.handleUpgrade == 'function' && typeof s.wss.emit == 'function';
+      }),
+      'externalWss must be an array of objects with path (string) and wss (WebSocketServer) properties'
+    );
+  }
+  for (const s of externalWss) {
+    mapOfExternalWss.set(s.path, s.wss);
+  }
 
   const router = new Router();
   const wss = new WebSocketServer({ noServer: true, handleProtocols });
@@ -55,13 +77,24 @@ const createEndpoint = ({ server, port, logger, middlewares = [] }) => {
   };
 
   server.on('upgrade', async(req, socket, head) => {
+    const parsed = parseurl(req);
+
+    /* check if this is a path we are delegating to an external wss */
+    if (mapOfExternalWss.has(parsed.pathname)) {
+      logger.debug(`delegating to external wss for path: ${parsed.pathname}`);
+      const wssExt = mapOfExternalWss.get(parsed.pathname);
+      wssExt.handleUpgrade(req, socket, head, (ws) => {
+        wssExt.emit('connection', ws, req);
+      });
+      return;
+    }
+
     const res = new http.ServerResponse(req);
     res.assignSocket(socket);
 
     req.locals = req.locals || {};
     req.locals.logger = logger;
     await applyMiddlewares(req, res, [...middlewares, validateRoute]);
-    const parsed = parseurl(req);
     const client = req.client;
     wss.handleUpgrade(req, socket, head, (ws) => {
       ws.req = req; // attach the request to the websocket in case middleware attached data
