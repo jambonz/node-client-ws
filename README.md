@@ -135,7 +135,6 @@ const { WebSocketServer } = require('ws');
 const wssFoo = new WebSocketServer({ noServer: true });
 const wssBar = new WebSocketServer({ noServer: true });
 
-
 // paths /foo and /bar should come to us, node-client-ws will handle the rest
 const makeService = createEndpoint({
   server,
@@ -190,6 +189,7 @@ This function is the main export of the library.
 - `server` {http.Server}  A pre-created Node.js HTTP/S server.
 - `port` {Number} Optional, the port to listen on.  If not provided it is assumed the application will call `listen` on the server object
 - `logger` {pinoLogger} Optional, a [pino](https://www.npmjs.com/package/pino) to use for logging.
+- `externalWss` {Array} Optional, an array of external WebSocket servers that you want to attach to this HTTP server (see example above)
 
 This function returns a function `makeService` which the application can use to associate different services within the websocket server to different request URL paths.
 
