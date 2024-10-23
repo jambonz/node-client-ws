@@ -118,6 +118,67 @@ There are two main ways for your webhook to send commands to jambonz:
  
  > If within an actionHook event handler you first want to reply with a new set of verbs, then later in the same handler want to send yet another set of new verbs use `send()` for the second set.  Only call `reply()` once per event callback.
 
+## Multiple servers sharing a single HTTP(s) server
+Typically this module is used in a single-purpose application that is a jambonz websocket application.  However, perhaps you want to handle other sorts of websocket traffic, outside of jambonz, through the same server.  You can do so by passing an array of "external websocket servers" to the `createEndpoint` method, as show in the example below.  
+
+Simply pass an array of objects in the optional `externalWss` property, where each element contains a `path` and a WebSocketServer instance.  When a connection is made to the path, your code will receive the connect event and the messages on that websocket and is responsible for responding.
+
+Here is a simple example of an application that handles `/foo` and `/bar` in separate WebSocketServers from that used for the messaging with jambonz.
+
+```js
+const {createServer} = require('http');
+const {createEndpoint} = require('@jambonz/node-client-ws');
+const server = createServer();
+const { WebSocketServer } = require('ws');
+
+// create two external websocket servers on this http server
+const wssFoo = new WebSocketServer({ noServer: true });
+const wssBar = new WebSocketServer({ noServer: true });
+
+
+// paths /foo and /bar should come to us, node-client-ws will handle the rest
+const makeService = createEndpoint({
+  server,
+  externalWss: [
+    {
+      path: '/foo',
+      wss: wssFoo
+    },
+    {
+      path: '/bar',
+      wss: wssBar
+    }
+  ]
+});
+
+const logger = require('pino')({level: process.env.LOGLEVEL || 'info'});
+const port = process.env.WS_PORT || 3000;
+
+require('./lib/routes')({logger, makeService});
+
+server.listen(port, () => {
+  logger.info(`jambonz websocket server listening at http://localhost:${port}`);
+});
+
+// Handle connections and messages for /foo WebSocket server
+wssFoo.on('connection', (ws) => {
+  logger.info('connection to /foo');
+  ws.on('message', (message) => {
+    logger.info(`received message on /foo: ${message}`);
+    ws.send('foo'); // Reply with 'foo' text frame
+  });
+});
+
+// Handle connections and messages for /bar WebSocket server
+wssBar.on('connection', (ws) => {
+  logger.info('connection to /bar');
+  ws.on('message', (message) => {
+    logger.info(`received message on /bar: ${message}`);
+    ws.send('bar'); // Reply with 'bar' text frame
+  });
+});
+```
+
 ## API
 
 ### Function: createEndpoint
