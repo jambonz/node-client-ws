@@ -98,5 +98,16 @@
       "track"
     ]
   },
-  "boostAudioSignal": "number|string"
+  "boostAudioSignal": "number|string",
+  "updateMediaPath": {
+    "properties": {
+      "path": {
+        "type": "string",
+        "enum": ["no-media", "partial-media", "full-media"]
+      }
+    },
+    "required": [
+      "path"
+    ]
+  }
 }
