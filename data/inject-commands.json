@@ -29,6 +29,10 @@
     "type": "string",
     "enum": ["pause", "resume"]
   },
+  "media:path": {
+    "type": "string",
+    "enum": ["no-media", "partial-media", "full-media"]
+  },
   "record": {
     "properties": {
       "action": {
@@ -98,16 +102,5 @@
       "track"
     ]
   },
-  "boostAudioSignal": "number|string",
-  "updateMediaPath": {
-    "properties": {
-      "path": {
-        "type": "string",
-        "enum": ["no-media", "partial-media", "full-media"]
-      }
-    },
-    "required": [
-      "path"
-    ]
-  }
+  "boostAudioSignal": "number|string"
 }
