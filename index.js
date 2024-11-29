@@ -68,8 +68,6 @@ const createEndpoint = ({
     const client = router.route(req);
     if (!client) {
       logger.debug(`No client found for path: ${parsed.pathname}`);
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('404 Not Found');
       return;
     }
     req.client = client;
