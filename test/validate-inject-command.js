@@ -8,31 +8,37 @@ test('validate inject commands syntax', (t) => {
   /* call:status */
   validateInjectCommand('call:status', 'completed');
   t.pass('successfully call:status with completed');
-  t.throws(() => validateInjectCommand('call:status', 'in-progress'), 'call:status checks allowed values');
+  validateInjectCommand('call:status', {call_status : 'completed'});
+  t.pass('successfully call:status with obj completed');
+  t.throws(() => validateInjectCommand('call:status', 1 ), 'call:status checks allowed values');
   
   /* mute:status */
   validateInjectCommand('mute:status', 'mute');
   t.pass('successfully mute:status with mute');
-  t.throws(() => validateInjectCommand('mute:status', 'unmutedd'), 'mute:status checks allowed values');
+  validateInjectCommand('mute:status', {mute_status: 'mute'});
+  t.pass('successfully mute:status with obj mute');
+  t.throws(() => validateInjectCommand('mute:status', 1), 'mute:status checks allowed values');
 
   /* conf:mute-status */
   validateInjectCommand('conf:mute-status', 'unmute');
   t.pass('successfully mute:status with mute');
-  t.throws(() => validateInjectCommand('conf:mute-status', 'unmutedd'), 'conf:mute-status checks allowed values');
+  validateInjectCommand('conf:mute-status', {mute_status: 'unmute'});
+  t.pass('successfully mute:status with obj  mute');
+  t.throws(() => validateInjectCommand('conf:mute-status', 1), 'conf:mute-status checks allowed values');
 
   /* conf:hold-status */
   validateInjectCommand('conf:hold-status', 'hold');
   t.pass('successfully conf:hold-status with hold');
-  validateInjectCommand('conf:hold-status', 'unhold');
-  t.pass('successfully conf:hold-status with unhold');
-  t.throws(() => validateInjectCommand('conf:hold-status', 'unmutedd'), 'conf:hold-status checks allowed values');
+  validateInjectCommand('conf:hold-status', {hold_status: 'unhold'});
+  t.pass('successfully conf:hold-status with obj unhold');
+  t.throws(() => validateInjectCommand('conf:hold-status', 1), 'conf:hold-status checks allowed values');
 
   /* listen:status */
   validateInjectCommand('listen:status', 'pause');
   t.pass('successfully listen:status with pause');
-  validateInjectCommand('listen:status', 'resume');
-  t.pass('successfully listen:status with resume');
-  t.throws(() => validateInjectCommand('listen:status', 'unmutedd'), 'listen:status checks allowed values');
+  validateInjectCommand('listen:status', {listen_status : 'resume'});
+  t.pass('successfully listen:status with obj resume');
+  t.throws(() => validateInjectCommand('listen:status', 1), 'listen:status checks allowed values');
 
   /* record */
   validateInjectCommand('record', { action: 'startCallRecording', recordingID: 'foo', siprecServerURL: 'http://foo.com' });

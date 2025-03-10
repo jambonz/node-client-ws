@@ -9,26 +9,11 @@
     "required": [
     ]
   },
-  "call:status" : {
-    "type": "string",
-    "enum": ["completed", "no-answer"]
-  },
-  "mute:status": {
-    "type": "string",
-    "enum": ["mute", "unmute"]
-  },
-  "conf:mute-status": {
-    "type": "string",
-    "enum": ["mute", "unmute"]
-  },
-  "conf:hold-status": {
-    "type": "string",
-    "enum": ["hold", "unhold"]
-  },
-  "listen:status": {
-    "type": "string",
-    "enum": ["pause", "resume"]
-  },
+  "call:status" : "object|string",
+  "mute:status": "object|string",
+  "conf:mute-status": "object|string",
+  "conf:hold-status": "object|string",
+  "listen:status": "object|string",
   "media:path": {
     "type": "string",
     "enum": ["no-media", "partial-media", "full-media"]
@@ -69,10 +54,7 @@
     ]
   },
   "tag": "object",
-  "transcribe:status": {
-    "type": "string",
-    "enum": ["pause", "resume"]
-  },
+  "transcribe:status" : "object|string",
   "conf:participant-action": {
     "properties": {
       "action": {
