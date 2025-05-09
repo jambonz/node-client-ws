@@ -4,7 +4,10 @@ const { WebSocketServer } = require('ws');
 const Client = require('./lib/client');
 const Router = require('./lib/ws-router');
 const parseurl = require('parseurl');
+const { validateAppConfig, getAppConfig, mergeEnvVarsWithDefaults } = require('./lib/utils/validator');
 
+assert.ok(typeof validateAppConfig === 'function', 'validateAppConfig must be a function');
+console.log('validateAppConfig is a function');
 const handleProtocols = (protocols) => (protocols.has('ws.jambonz.org') ? 'ws.jambonz.org' : false);
 
 const createEndpoint = ({
@@ -105,7 +108,7 @@ const createEndpoint = ({
   if (port) server.listen(port);
 
   function makeService({ path }) {
-    const client = new Client(logger);
+    const client = new Client(logger, path);
     router.use(path, client);
     return client;
   }
@@ -113,4 +116,4 @@ const createEndpoint = ({
   return makeService;
 };
 
-module.exports = { createEndpoint };
+module.exports = { createEndpoint, validateAppConfig, getAppConfig, mergeEnvVarsWithDefaults };
