@@ -7,7 +7,6 @@ const parseurl = require('parseurl');
 const { validateAppConfig, getAppConfig, mergeEnvVarsWithDefaults } = require('./lib/utils/validator');
 
 assert.ok(typeof validateAppConfig === 'function', 'validateAppConfig must be a function');
-console.log('validateAppConfig is a function');
 const handleProtocols = (protocols) => (protocols.has('ws.jambonz.org') ? 'ws.jambonz.org' : false);
 
 const createEndpoint = ({
