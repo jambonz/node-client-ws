@@ -10,7 +10,7 @@
   "author": "Dave Horton",
   "license": "MIT",
   "dependencies": {
-    "@jambonz/verb-specifications": "^0.0.104",
+    "@jambonz/verb-specifications": "^0.0.106",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "debug": "^4.3.4",
