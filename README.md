@@ -3,8 +3,8 @@
 A simple Node.js library for building websocket server applications for [jambonz](https://jambonz.org)
 
 
-[!CAUTION]
-This project is now deprecated, see the new [Combined SDK](https://github.com/jambonz/node-sdk)
+> [!CAUTION]
+> This project is now deprecated, see the new [Combined SDK](https://github.com/jambonz/node-sdk)
 
 # Installing
 ```
